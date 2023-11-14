@@ -11,6 +11,14 @@ from flask import Flask, request, render_template, session, redirect, url_for, j
 from google.cloud import firestore, storage
 import stripe
 
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+stripe.api_key = STRIPE_SECRET_KEY
+
+def is_user_subscribed(stripe_customer_id):
+    subscriptions = stripe.Subscription.list(customer=stripe_customer_id, status='active')
+    return bool(subscriptions.data)  # Returns True if there are active subscriptions
+
+
 import re
 import tiktoken
 from tiktoken.core import Encoding
