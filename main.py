@@ -11,6 +11,29 @@ from flask import Flask, request, render_template, session, redirect, url_for, j
 from google.cloud import firestore, storage
 import stripe
 
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+stripe.api_key = STRIPE_SECRET_KEY
+
+def is_user_subscribed(stripe_customer_id):
+    subscriptions = stripe.Subscription.list(customer=stripe_customer_id, status='active')
+    return bool(subscriptions.data)  # Returns True if there are active subscriptions
+
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
+def initialize_google_sheets():
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    creds = ServiceAccountCredentials.from_json_keyfile_name('path_to_google_credentials.json', scope)
+    client = gspread.authorize(creds)
+    sheet = client.open_by_url('https://docs.google.com/spreadsheets/d/your_spreadsheet_id').sheet1
+    return sheet
+
+def update_user_data(sheet, user_data):
+    # Implement logic to update user data in the sheet
+    pass
+
+
+
 import re
 import tiktoken
 from tiktoken.core import Encoding
@@ -108,7 +131,7 @@ DEFAULT_ENV_VARS = {
     'PREVIOUS_DUMMY_USER_MESSAGE2': 'こちらこそよろしく。',
     'PREVIOUS_DUMMY_ASSISTANT_MESSAGE2': 'よろしくお願いします。',
     'MAX_TOKEN_NUM': '3700',
-    'MAX_DAILY_USAGE': '1000',
+    'MAX_DAILY_USAGE': '634',
     'GROUP_MAX_DAILY_USAGE': '1000',
     'MAX_DAILY_MESSAGE': '1日の最大使用回数を超過しました。',
     'FREE_LIMIT_DAY': '0',
