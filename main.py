@@ -10,6 +10,8 @@ import pytz
 from flask import Flask, request, render_template, session, redirect, url_for, jsonify, abort
 from google.cloud import firestore, storage
 import stripe
+# 環境変数からStripeのシークレットキーを取得して設定
+stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
 
 import re
 import tiktoken
@@ -21,6 +23,19 @@ from whisper import get_audio, speech_to_text
 from voice import convert_audio_to_m4a, text_to_speech, send_audio_to_line, delete_local_file, set_bucket_lifecycle, send_audio_to_line_reply
 from payment import create_checkout_session
 from quickreply import create_quick_reply
+
+def check_user_subscription(user_id):
+    """
+    指定されたuser_idがアクティブなサブスクリプションを持っているかをチェックします。
+    :param user_id: ユーザーのID。
+    :return: ユーザーがアクティブなサブスクリプションを持っていればTrue、そうでなければFalseを返します。
+    """
+    try:
+        subscriptions = stripe.Subscription.list(customer=user_id, status='active')
+        return any(subscriptions)
+    except stripe.error.StripeError as e:
+        print(f"Stripe API error: {e}")
+        return False
 
 REQUIRED_ENV_VARS = [
     "BOT_NAME",
