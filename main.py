@@ -123,7 +123,7 @@ DEFAULT_ENV_VARS = {
     'PREVIOUS_DUMMY_USER_MESSAGE2': 'こちらこそよろしく。',
     'PREVIOUS_DUMMY_ASSISTANT_MESSAGE2': 'よろしくお願いします。',
     'MAX_TOKEN_NUM': '3700',
-    'MAX_DAILY_USAGE': '999',
+    'MAX_DAILY_USAGE': '777',
     'GROUP_MAX_DAILY_USAGE': '634',
     'MAX_DAILY_MESSAGE': '1日の最大使用回数を超過しました。',
     'FREE_LIMIT_DAY': '0',
